@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 63e9de508eada454dbd2e3db0054c3f2
+guid: 743c417a1380ba346aa6e7c7a33800c8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8778386249900385398
-    second: personaje_0
+      213: 8469663187170604378
+    second: isometrica alcantarilla base-export_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: personaje_0
+      name: isometrica alcantarilla base-export_0
       rect:
         serializedVersion: 2
-        x: 21
-        y: 19
-        width: 19
-        height: 38
+        x: 11
+        y: 10
+        width: 42
+        height: 40
       alignment: 9
-      pivot: {x: 0.5, y: 0.1}
+      pivot: {x: 0.5, y: 0.7}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6746c7ec8c713d970800000000000000
-      internalID: 8778386249900385398
+      spriteID: a55b1866bc94a8570800000000000000
+      internalID: 8469663187170604378
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 80c7db892cb4a514f9ef60702f5a2bf8
+    spriteID: 146da41f4d8f4e54b84155ee078d9da1
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      personaje_0: 8778386249900385398
+      isometrica alcantarilla base-export_0: 8469663187170604378
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
