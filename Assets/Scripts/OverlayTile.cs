@@ -15,7 +15,7 @@ public class OverlayTile : MonoBehaviour
     [SerializeField] private OverlayTile previousTile;
     public OverlayTile _previousTile { get { return previousTile; } set { previousTile = value; } }
 
-    private Vector3Int gridPos;
+    [SerializeField] private Vector3Int gridPos;
     public Vector3Int GridPos { get { return gridPos; } set{ gridPos = value; } }
     public Vector2Int Grid2DPos { get { return new Vector2Int(gridPos.x,gridPos.y); } }
 

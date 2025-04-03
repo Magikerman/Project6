@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RangeFinder : MonoBehaviour
+public class RangeFinder
 {
-    public List<OverlayTile> GetTilesInRange(OverlayTile startingTile, int range)
+    public List<OverlayTile> GetTilesInRange(OverlayTile startingTile, int range, int jumpDistance)
     {
         var inRangeTiles = new List<OverlayTile>();
 
@@ -22,7 +22,7 @@ public class RangeFinder : MonoBehaviour
 
             foreach (var item in tileForPreviousStep)
             {
-                surroundingTile.AddRange(MapManager.Instance.GetNeighbourTiles(item, new List<OverlayTile>()));
+                surroundingTile.AddRange(MapManager.Instance.GetNeighbourTiles(item, new List<OverlayTile>(), jumpDistance));
             }
 
             inRangeTiles.AddRange(surroundingTile);

@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class PathFinder
 {
-    public List<OverlayTile> FindPath(OverlayTile start, OverlayTile end, List<OverlayTile> searchableTiles)
+    public List<OverlayTile> FindPath(OverlayTile start, OverlayTile end, List<OverlayTile> searchableTiles, int jumpDistance)
     { 
         List<OverlayTile> openList = new List<OverlayTile>();
         List<OverlayTile> closedList = new List<OverlayTile>();
@@ -26,11 +26,10 @@ public class PathFinder
                 return GetFinishedList(start, end);
             }
 
-            var neighbourTiles = MapManager.Instance.GetNeighbourTiles(currentOverlayTile, searchableTiles);
+            var neighbourTiles = MapManager.Instance.GetNeighbourTiles(currentOverlayTile, searchableTiles, jumpDistance);
 
             foreach (var neighbour in neighbourTiles)
             {
-                //cambiar 1 por "CharacterInfo.JumpHeight"
                 if(neighbour.IsBlocked || closedList.Contains(neighbour))
                 {
                     continue;

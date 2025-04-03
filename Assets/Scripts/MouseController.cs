@@ -6,9 +6,13 @@ using UnityEngine;
 public class MouseController : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] private int jumpDistance;
+    [SerializeField] private int tileRange;
+    public int JumpDistance {  get { return jumpDistance; } }
     
     [SerializeField] private GameObject characterPrefab;
-    private CharacterInfo character;
+    [SerializeField] private CharacterInfo character;
+    public CharacterInfo Character { set { character = value; } }
 
     private PathFinder pathFinder;
     private RangeFinder rangeFinder;
@@ -35,16 +39,7 @@ public class MouseController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                if(character == null)
-                {
-                    character = Instantiate(characterPrefab).GetComponent<CharacterInfo>();
-                    PositionCharacterOnTile(overlayTile);
-                    GetInRangeTiles();
-                }
-                else
-                {
-                    path = pathFinder.FindPath(character._activeTile, overlayTile, inRangeTiles);
-                }
+                path = pathFinder.FindPath(character._activeTile, overlayTile, inRangeTiles, jumpDistance);
             }
         }
 
@@ -54,14 +49,14 @@ public class MouseController : MonoBehaviour
         }
     }
 
-    private void GetInRangeTiles()
+    public void GetInRangeTiles()
     {
         foreach (var item in inRangeTiles)
         {
             item.HideTile();
         }
 
-        inRangeTiles = rangeFinder.GetTilesInRange(character._activeTile, 3);
+        inRangeTiles = rangeFinder.GetTilesInRange(character._activeTile, tileRange, jumpDistance);
 
         foreach (var item in inRangeTiles)
         {
@@ -102,7 +97,7 @@ public class MouseController : MonoBehaviour
         return null;
     }
 
-    private void PositionCharacterOnTile(OverlayTile tile)
+    public void PositionCharacterOnTile(OverlayTile tile)
     {
         character.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y + 0.0001f, tile.transform.position.z);
         character.GetComponent<SpriteRenderer>().sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder+2;

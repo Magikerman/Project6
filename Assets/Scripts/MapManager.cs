@@ -13,6 +13,8 @@ public class MapManager : MonoBehaviour
     public GameObject overlayContainer;
 
     public Dictionary <Vector2Int, OverlayTile> map;
+
+    private int numberOfTiles = 0;
     
     private void Awake()
     {
@@ -26,7 +28,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    void Start()
+    void OnEnable()
     {
         var tileMap = gameObject.GetComponentInChildren<Tilemap>();
 
@@ -53,13 +55,16 @@ public class MapManager : MonoBehaviour
                         overlayTile.GetComponent<SpriteRenderer>().sortingOrder = tileMap.GetComponent<TilemapRenderer>().sortingOrder +1;
                         overlayTile.GridPos = tileLocation;
                         map.Add(tileKey, overlayTile);
+
+                        overlayTile.name = "InvisTile " + numberOfTiles.ToString();
+                        numberOfTiles++;
                     }
                 }
             }
         }
     }
 
-    public List<OverlayTile> GetNeighbourTiles(OverlayTile currentOverlayTile, List<OverlayTile> searchTiles)
+    public List<OverlayTile> GetNeighbourTiles(OverlayTile currentOverlayTile, List<OverlayTile> searchTiles, int jumpDistance)
     {
         Dictionary<Vector2Int, OverlayTile> tileToSearch = new Dictionary<Vector2Int, OverlayTile>();
 
@@ -82,7 +87,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if(Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) < 1)
+            if(Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -93,7 +98,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) < 1)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -104,7 +109,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) < 1)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -115,12 +120,25 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) < 1)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
         }
 
         return neighbours;
+    }
+    public OverlayTile SearchForTile(Vector2Int gridPos)
+    {
+        for (int i = 0; i > numberOfTiles; i++)
+        {
+            GameObject tile = GameObject.Find("InvisTile " + i.ToString());
+
+            if (tile.GetComponent<OverlayTile>().Grid2DPos == gridPos)
+            {
+                return tile.GetComponent<OverlayTile>();
+            }
+        }
+        return null;
     }
 }
