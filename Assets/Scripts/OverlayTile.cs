@@ -17,18 +17,10 @@ public class OverlayTile : MonoBehaviour
 
     private Vector3Int gridPos;
     public Vector3Int GridPos { get { return gridPos; } set{ gridPos = value; } }
+    public Vector2Int Grid2DPos { get { return new Vector2Int(gridPos.x,gridPos.y); } }
 
     private bool isBlocked;
     public bool IsBlocked { get { return isBlocked; } }
-
-
-    private void Update()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            HideTile();
-        }
-    }
 
     public void ShowTile()
     {

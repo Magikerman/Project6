@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class PathFinder
 {
-    public List<OverlayTile> FindPath(OverlayTile start, OverlayTile end)
+    public List<OverlayTile> FindPath(OverlayTile start, OverlayTile end, List<OverlayTile> searchableTiles)
     { 
         List<OverlayTile> openList = new List<OverlayTile>();
         List<OverlayTile> closedList = new List<OverlayTile>();
@@ -26,12 +26,12 @@ public class PathFinder
                 return GetFinishedList(start, end);
             }
 
-            var neighbourTiles = GetNeighbourTiles(currentOverlayTile);
+            var neighbourTiles = MapManager.Instance.GetNeighbourTiles(currentOverlayTile, searchableTiles);
 
             foreach (var neighbour in neighbourTiles)
             {
                 //cambiar 1 por "CharacterInfo.JumpHeight"
-                if(neighbour.IsBlocked || closedList.Contains(neighbour) || Mathf.Abs(currentOverlayTile.GridPos.z - neighbour.GridPos.z) > 1)
+                if(neighbour.IsBlocked || closedList.Contains(neighbour))
                 {
                     continue;
                 }
@@ -69,46 +69,5 @@ public class PathFinder
     private int GetManhattenDistance(OverlayTile start, OverlayTile neighbour)
     {
         return Mathf.Abs(start.GridPos.x - neighbour.GridPos.x) + Mathf.Abs(start.GridPos.y - neighbour.GridPos.y);
-    }
-
-    private List<OverlayTile> GetNeighbourTiles(OverlayTile currentOverlayTile)
-    {
-        var map = MapManager.Instance.map;
-
-        List<OverlayTile> neighbours = new List<OverlayTile>();
-
-        //arriba
-        Vector2Int locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x, currentOverlayTile.GridPos.y + 1);
-
-        if (map.ContainsKey(locationToCheck))
-        {
-            neighbours.Add(map[locationToCheck]);
-        }
-
-        //abajo
-        locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x, currentOverlayTile.GridPos.y - 1);
-
-        if (map.ContainsKey(locationToCheck))
-        {
-            neighbours.Add(map[locationToCheck]);
-        }
-
-        //derecha
-        locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x + 1, currentOverlayTile.GridPos.y);
-
-        if (map.ContainsKey(locationToCheck))
-        {
-            neighbours.Add(map[locationToCheck]);
-        }
-
-        //izquierda
-        locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x - 1, currentOverlayTile.GridPos.y);
-
-        if (map.ContainsKey(locationToCheck))
-        {
-            neighbours.Add(map[locationToCheck]);
-        }
-
-        return neighbours;
     }
 }

@@ -11,12 +11,15 @@ public class MouseController : MonoBehaviour
     private CharacterInfo character;
 
     private PathFinder pathFinder;
+    private RangeFinder rangeFinder;
     private List<OverlayTile> path = new List<OverlayTile>();
+    private List<OverlayTile> inRangeTiles = new List<OverlayTile>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         pathFinder = new PathFinder();
+        rangeFinder = new RangeFinder();
     }
 
     // Update is called once per frame
@@ -32,16 +35,15 @@ public class MouseController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                overlayTile.ShowTile();
-
                 if(character == null)
                 {
                     character = Instantiate(characterPrefab).GetComponent<CharacterInfo>();
                     PositionCharacterOnTile(overlayTile);
+                    GetInRangeTiles();
                 }
                 else
                 {
-                    path = pathFinder.FindPath(character._activeTile, overlayTile);
+                    path = pathFinder.FindPath(character._activeTile, overlayTile, inRangeTiles);
                 }
             }
         }
@@ -49,6 +51,21 @@ public class MouseController : MonoBehaviour
         if (path.Count > 0)
         {
             MoveAlongPath();
+        }
+    }
+
+    private void GetInRangeTiles()
+    {
+        foreach (var item in inRangeTiles)
+        {
+            item.HideTile();
+        }
+
+        inRangeTiles = rangeFinder.GetTilesInRange(character._activeTile, 3);
+
+        foreach (var item in inRangeTiles)
+        {
+            item.ShowTile();
         }
     }
 
@@ -64,6 +81,10 @@ public class MouseController : MonoBehaviour
         {
             PositionCharacterOnTile(path[0]);
             path.RemoveAt(0);
+        }
+        if (path.Count == 0)
+        {
+            GetInRangeTiles();
         }
     }
     
