@@ -1,35 +1,28 @@
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
-using System.Collections;
-using System.Collections.Generic;
 
 public class CharacterInfo : MonoBehaviour
 {
     [SerializeField] private OverlayTile activeTile;
-    [SerializeField] private MouseController cursor;
-
-    [SerializeField] private Vector2Int startPos;
-    [SerializeField] private OverlayTile startTile;
-
     public OverlayTile _activeTile
     {
         get { return activeTile; }
         set { activeTile = value; }
     }
 
-    private void Start()
+    [SerializeField] private bool atacking;
+    public bool Atacking
     {
-        cursor.Character = this.GetComponent<CharacterInfo>();
-        startTile = MapManager.Instance.SearchForTile(startPos);
-
-        if (startTile == null )
-        {
-            startTile = GameObject.Find("InvisTile 38").GetComponent<OverlayTile>();
-        }
-
-        cursor.PositionCharacterOnTile(startTile);
-        cursor.GetInRangeTiles();
+        get { return atacking; }
+        set { atacking = value; }
     }
+
+    [SerializeField] private int hp;
+    public int Hp
+    {
+        get { return hp; }
+        set { hp = value; }
+    }
+
+    [SerializeField] private int damage;
+    public int Damage => damage;
 }

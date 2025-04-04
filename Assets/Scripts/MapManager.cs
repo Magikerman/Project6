@@ -14,8 +14,10 @@ public class MapManager : MonoBehaviour
 
     public Dictionary <Vector2Int, OverlayTile> map;
 
-    private int numberOfTiles = 0;
-    
+    //poner en el gameManager
+    public CharacterInfo player1;
+    public CharacterInfo player2;
+
     private void Awake()
     {
         if(_instance != null && _instance != this)
@@ -28,7 +30,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    void Start()
     {
         var tileMap = gameObject.GetComponentInChildren<Tilemap>();
 
@@ -55,16 +57,82 @@ public class MapManager : MonoBehaviour
                         overlayTile.GetComponent<SpriteRenderer>().sortingOrder = tileMap.GetComponent<TilemapRenderer>().sortingOrder +1;
                         overlayTile.GridPos = tileLocation;
                         map.Add(tileKey, overlayTile);
-
-                        overlayTile.name = "InvisTile " + numberOfTiles.ToString();
-                        numberOfTiles++;
                     }
                 }
             }
         }
     }
 
-    public List<OverlayTile> GetNeighbourTiles(OverlayTile currentOverlayTile, List<OverlayTile> searchTiles, int jumpDistance)
+    public List<OverlayTile> GetNeighbourAtkTiles(OverlayTile currentOverlayTile, List<OverlayTile> searchTiles, int jumpHeight, int range)
+    {
+        Dictionary<Vector2Int, OverlayTile> tileToSearch = new Dictionary<Vector2Int, OverlayTile>();
+
+        if (searchTiles.Count > 0)
+        {
+            foreach (var tile in searchTiles)
+            {
+                tileToSearch.Add(tile.Grid2DPos, tile);
+            }
+        }
+        else
+        {
+            tileToSearch = map;
+        }
+
+        List<OverlayTile> neighbours = new List<OverlayTile>();
+
+        for (int i = 1; i < range+1; i++)
+        {
+            //arriba
+            Vector2Int locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x, currentOverlayTile.GridPos.y + i);
+
+            if (tileToSearch.ContainsKey(locationToCheck))
+            {
+                if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
+                {
+                    neighbours.Add(tileToSearch[locationToCheck]);
+                }
+            }
+
+            //abajo
+            locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x, currentOverlayTile.GridPos.y - i);
+
+            if (tileToSearch.ContainsKey(locationToCheck))
+            {
+                if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
+                {
+                    neighbours.Add(tileToSearch[locationToCheck]);
+                }
+            }
+
+            //derecha
+            locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x + i, currentOverlayTile.GridPos.y);
+
+            if (tileToSearch.ContainsKey(locationToCheck))
+            {
+                if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
+                {
+                    neighbours.Add(tileToSearch[locationToCheck]);
+                }
+            }
+
+            //izquierda
+            locationToCheck = new Vector2Int(currentOverlayTile.GridPos.x - i, currentOverlayTile.GridPos.y);
+
+            if (tileToSearch.ContainsKey(locationToCheck))
+            {
+                if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
+                {
+                    neighbours.Add(tileToSearch[locationToCheck]);
+                }
+            }
+        }
+
+        
+        return neighbours; ;
+    }
+
+    public List<OverlayTile> GetNeighbourTiles(OverlayTile currentOverlayTile, List<OverlayTile> searchTiles, int jumpHeight)
     {
         Dictionary<Vector2Int, OverlayTile> tileToSearch = new Dictionary<Vector2Int, OverlayTile>();
 
@@ -87,7 +155,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if(Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
+            if(Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -98,7 +166,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -109,7 +177,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -120,7 +188,7 @@ public class MapManager : MonoBehaviour
 
         if (tileToSearch.ContainsKey(locationToCheck))
         {
-            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpDistance)
+            if (Mathf.Abs(currentOverlayTile.GridPos.z - tileToSearch[locationToCheck].GridPos.z) <= jumpHeight)
             {
                 neighbours.Add(tileToSearch[locationToCheck]);
             }
@@ -128,17 +196,17 @@ public class MapManager : MonoBehaviour
 
         return neighbours;
     }
-    public OverlayTile SearchForTile(Vector2Int gridPos)
-    {
-        for (int i = 0; i > numberOfTiles; i++)
-        {
-            GameObject tile = GameObject.Find("InvisTile " + i.ToString());
 
-            if (tile.GetComponent<OverlayTile>().Grid2DPos == gridPos)
-            {
-                return tile.GetComponent<OverlayTile>();
-            }
+    //mover a gameManager
+    public void SendAtackTile(OverlayTile atackedTile, int damage)
+    {
+        if (atackedTile.Grid2DPos == player1._activeTile.Grid2DPos)
+        {
+            player1.Hp -= damage;
         }
-        return null;
+        if (atackedTile.Grid2DPos == player2._activeTile.Grid2DPos)
+        {
+            player2.Hp -= damage;
+        }
     }
 }

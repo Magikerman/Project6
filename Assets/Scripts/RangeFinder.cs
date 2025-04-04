@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class RangeFinder
 {
-    public List<OverlayTile> GetTilesInRange(OverlayTile startingTile, int range, int jumpDistance)
+    public List<OverlayTile> GetTilesInRange(OverlayTile startingTile, int range, int jumpHeight)
     {
         var inRangeTiles = new List<OverlayTile>();
 
@@ -22,7 +23,7 @@ public class RangeFinder
 
             foreach (var item in tileForPreviousStep)
             {
-                surroundingTile.AddRange(MapManager.Instance.GetNeighbourTiles(item, new List<OverlayTile>(), jumpDistance));
+                surroundingTile.AddRange(MapManager.Instance.GetNeighbourTiles(item, new List<OverlayTile>(), jumpHeight));
             }
 
             inRangeTiles.AddRange(surroundingTile);
@@ -31,5 +32,15 @@ public class RangeFinder
         }
 
         return inRangeTiles.Distinct().ToList();
+    }
+
+    public List<OverlayTile> GetTilesInAtkRange(OverlayTile startingTile, int atkRange, int atkHeight)
+    {
+        var inAtkRangeTiles = new List<OverlayTile>();
+
+        inAtkRangeTiles.AddRange(MapManager.Instance.GetNeighbourAtkTiles(startingTile, new List<OverlayTile>(), atkHeight, atkRange));
+        inAtkRangeTiles.Remove(startingTile);
+
+        return inAtkRangeTiles;
     }
 }

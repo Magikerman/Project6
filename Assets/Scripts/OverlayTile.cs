@@ -15,7 +15,7 @@ public class OverlayTile : MonoBehaviour
     [SerializeField] private OverlayTile previousTile;
     public OverlayTile _previousTile { get { return previousTile; } set { previousTile = value; } }
 
-    [SerializeField] private Vector3Int gridPos;
+    private Vector3Int gridPos;
     public Vector3Int GridPos { get { return gridPos; } set{ gridPos = value; } }
     public Vector2Int Grid2DPos { get { return new Vector2Int(gridPos.x,gridPos.y); } }
 
@@ -30,5 +30,10 @@ public class OverlayTile : MonoBehaviour
     public void HideTile()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0);
+    }
+
+    public void AtkTile()
+    {
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(5, 0, 0, 1);
     }
 }

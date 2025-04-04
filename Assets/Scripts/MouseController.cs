@@ -5,14 +5,22 @@ using UnityEngine;
 
 public class MouseController : MonoBehaviour
 {
+    //cosas que deberian ir en "characterInfo"
     [SerializeField] private float speed;
-    [SerializeField] private int jumpDistance;
-    [SerializeField] private int tileRange;
-    public int JumpDistance {  get { return jumpDistance; } }
-    
+    [SerializeField] private int range;
+    [SerializeField] private int jumpHeight;
+    [SerializeField] private int atkRange;
+
+    private List<OverlayTile> atkTiles = new List<OverlayTile>();
+    //todo eso
+
+    //Variable temp (Borrar despues de reemplazar su función)
+    [SerializeField] private bool player1;
+
+    private OverlayTile overlayTile;
+
     [SerializeField] private GameObject characterPrefab;
-    [SerializeField] private CharacterInfo character;
-    public CharacterInfo Character { set { character = value; } }
+    private CharacterInfo character;
 
     private PathFinder pathFinder;
     private RangeFinder rangeFinder;
@@ -29,17 +37,57 @@ public class MouseController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
+        if (Input.GetKeyDown("space"))
+        {
+            character.Atacking = !character.Atacking;
+
+            if (character.Atacking)
+            {
+                GetAtkTiles();
+            }
+            else
+            {
+                GetInRangeTiles();
+            }
+        }
+
         var FocusedTileHit = GetFocusedOnTile();
 
         if(FocusedTileHit.HasValue)
         {
-            OverlayTile overlayTile = FocusedTileHit.Value.collider.gameObject.GetComponent<OverlayTile>();
+            overlayTile = FocusedTileHit.Value.collider.gameObject.GetComponent<OverlayTile>();
             transform.position = overlayTile.transform.position;
             gameObject.GetComponent<SpriteRenderer>().sortingOrder = overlayTile.GetComponent<SpriteRenderer>().sortingOrder+1;
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) )
             {
-                path = pathFinder.FindPath(character._activeTile, overlayTile, inRangeTiles, jumpDistance);
+                if(character == null)
+                {
+                    character = Instantiate(characterPrefab).GetComponent<CharacterInfo>();
+                    PositionCharacterOnTile(overlayTile);
+                    GetInRangeTiles();
+
+                    if (player1)
+                    {
+                        MapManager.Instance.player1 = character;
+                    }
+                    else
+                    {
+                        MapManager.Instance.player2 = character;
+                    }
+                }
+                else
+                {
+                    if (Input.GetMouseButtonDown(0) && character.Atacking == true)
+                    {
+                        MapManager.Instance.SendAtackTile(overlayTile, character.Damage);
+                    }
+                    else if (Input.GetMouseButtonDown(0))
+                    {
+                        path = pathFinder.FindPath(character._activeTile, overlayTile, inRangeTiles, jumpHeight);
+                    }
+                    
+                }
             }
         }
 
@@ -49,18 +97,43 @@ public class MouseController : MonoBehaviour
         }
     }
 
-    public void GetInRangeTiles()
+    private void GetInRangeTiles()
+    {
+        foreach (var item in atkTiles)
+        {
+            item.HideTile();
+        }
+
+        foreach (var item in inRangeTiles)
+        {
+            item.HideTile();
+        }
+
+        inRangeTiles = rangeFinder.GetTilesInRange(character._activeTile, range, jumpHeight);
+
+        foreach (var item in inRangeTiles)
+        {
+            item.ShowTile();
+        }
+    }
+
+    private void GetAtkTiles()
     {
         foreach (var item in inRangeTiles)
         {
             item.HideTile();
         }
 
-        inRangeTiles = rangeFinder.GetTilesInRange(character._activeTile, tileRange, jumpDistance);
-
-        foreach (var item in inRangeTiles)
+        foreach (var item in atkTiles)
         {
-            item.ShowTile();
+            item.HideTile();
+        }
+
+        atkTiles = rangeFinder.GetTilesInAtkRange(character._activeTile, atkRange, jumpHeight);
+
+        foreach (var item in atkTiles)
+        {
+            item.AtkTile();
         }
     }
 
@@ -97,7 +170,7 @@ public class MouseController : MonoBehaviour
         return null;
     }
 
-    public void PositionCharacterOnTile(OverlayTile tile)
+    private void PositionCharacterOnTile(OverlayTile tile)
     {
         character.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y + 0.0001f, tile.transform.position.z);
         character.GetComponent<SpriteRenderer>().sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder+2;
